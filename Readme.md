@@ -30,7 +30,7 @@ console.log(s(1));			// 2
 console.log(s(1.5));		// 2.5
 ```
 
-The first line will make `s` a function that interpolates the array [1,2,3] as a cubic spline. the second line
+The first line will make `s` a function that interpolates the array [1,2,3,4] as a cubic spline. the second line
 will print out index 1 of the array, which is 2. The third line *interpolates* 
 halfway between indexes 1 and 2 of the array, yielding 2.5
 
