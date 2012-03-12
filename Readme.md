@@ -1,3 +1,5 @@
+![Smooth.js](/osuushi/Smooth.js/wiki/images/logo-white.png)
+
 ####Table of Contents
 [        What is this for?](#rm-what)<br/>
 [        How do I use it?](#rm-how)<br/>
