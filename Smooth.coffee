@@ -1,5 +1,5 @@
 ###
-Smooth.js version 0.1
+Smooth.js version 0.1.1
 
 Turn arrays into smooth functions.
 
@@ -72,6 +72,7 @@ class AbstractInterpolator
 			else
 				err = new Error
 				err.message = "The clipping mode #{config.clip} is invalid."
+				throw err
 
     # Get input array value at i, applying the clipping method
 	getClippedInput: (i) ->
@@ -147,11 +148,13 @@ Smooth = (arr, config = {}) ->
 		else
 			err = new Error
 			err.message = "The interpolation method #{config.method} is invalid."
+			throw err
 
 	#Make sure there's at least one element in the input array
 	if not arr.length
 		err = new Error
 		err.message = 'Array must have at least one element.'
+		throw err
 
 	#See what type of data we're dealing with
 	dataType = Object.prototype.toString.call arr[0]
@@ -167,6 +170,7 @@ Smooth = (arr, config = {}) ->
 		else 
 			err = new Error
 			err.message = 'Invalid element type: #{dataType}'
+			throw err
 
 
 
