@@ -39,11 +39,11 @@ clipMirror = (i, n) ->
 	i = period - i if i > n - 1 #flip when out of bounds 
 	i
 
-getFraction = (x) -> x - Math.floor x
 
 class AbstractInterpolator
 
-	constructor: (@array, config) ->
+	constructor: (array, config) ->
+		@array = array.slice 0 #copy the array
 		@length = @array.length #cache length
 
 		#Set the clipping helper method
@@ -90,11 +90,28 @@ class NearestInterpolator extends AbstractInterpolator
 #Linear interpolator (first order Bezier)
 class LinearInterpolator extends AbstractInterpolator
 	interpolate: (t) ->
-		i = Math.floor t
-		a = @getClippedInput i
-		b = @getClippedInput i+1
-		t = getFraction t
+		k = Math.floor t
+		a = @getClippedInput k
+		b = @getClippedInput k+1
+		#Translate t to interpolate between k and k+1
+		t -= k
 		return (1-t)*a + (t)*b
+
+
+class CubicInterpolator extends AbstractInterpolator
+	# Finite difference (because of uniformity, equivalent to Cardinal spline with tension 0.5)
+	getTangent: (k) -> 0.5*(@getClippedInput(k + 1) - @getClippedInput(k - 1))
+
+	interpolate: (t) ->
+		k = Math.floor t
+		m = [(@getTangent k), (@getTangent k+1)] #get tangents
+		p = [(@getClippedInput k), (@getClippedInput k+1)] #get points
+		#Translate t to interpolate between k and k+1
+		t -= k
+		t2 = t*t #t^2
+		t3 = t*t2 #t^3
+		#Apply cubic hermite spline formula
+		return (2*t3 - 3*t2 + 1)*p[0] + (t3 - 2*t2 + t)*m[0] + (-2*t3 + 3*t2)*p[1] + (t3 - t2)*m[1]
 
 
 
