@@ -43,6 +43,9 @@ options described below.
 <a name = "rm-method" />
 ### Interpolation Methods
 
+        (For visual illustrations of these interpolation modes see 
+[the wiki](https://github.com/osuushi/Smooth.js/wiki/Interpolation-Modes))
+
 The `method` config option specifies the interpolation method. There are three possible values for this 
 option:
 
