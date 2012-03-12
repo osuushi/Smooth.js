@@ -9,8 +9,8 @@ Subclasses must override interpolate().
 Enum = 
 	###Interpolation methods###
 	METHOD_NEAREST: 0 #Rounds to nearest whole index
-	METHOD_LINEAR: 1 # Default: linear interpolation
-	METHOD_CUBIC: 2
+	METHOD_LINEAR: 1 
+	METHOD_CUBIC: 2 # Default: cubic interpolation
 
 	###Input clipping types###
 	CLIP_CLAMP: 0 # Default: clamp to [0, arr.length-1]
@@ -20,7 +20,7 @@ Enum =
 
 
 defaultConfig = 
-	method: Enum.METHOD_LINEAR
+	method: Enum.METHOD_CUBIC
 	clip: Enum.CLIP_CLAMP 
 
 
