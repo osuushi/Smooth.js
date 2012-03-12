@@ -1,7 +1,11 @@
 ###
-Abstract scalar interpolation class which provides common functionality for all interpolators
+Smooth.js version 0.1
 
-Subclasses must override interpolate().
+Turn arrays into smooth functions.
+
+Copyright 2012 Spencer Cohen
+Licensed under MIT license (see "Smooth.js MIT license.txt")
+
 ###
 
 
@@ -18,11 +22,14 @@ Enum =
 	CLIP_PERIODIC: 2 # Repeat the array infinitely in either direction
 	CLIP_MIRROR: 3 # Repeat infinitely in either direction, flipping each time
 
+	### Constants for control over the cubic interpolation tension ###
+	CUBIC_TENSION_DEFAULT: 0.5 # Default tension value
+	CUBIC_TENSION_CATMULL_ROM: 0
 
 defaultConfig = 
 	method: Enum.METHOD_CUBIC
+	cubicTension: Enum.CUBIC_TENSION_DEFAULT
 	clip: Enum.CLIP_CLAMP 
-
 
 
 ###Index clipping functions###
@@ -39,6 +46,12 @@ clipMirror = (i, n) ->
 	i = period - i if i > n - 1 #flip when out of bounds 
 	i
 
+
+###
+Abstract scalar interpolation class which provides common functionality for all interpolators
+
+Subclasses must override interpolate().
+###
 
 class AbstractInterpolator
 
@@ -99,8 +112,12 @@ class LinearInterpolator extends AbstractInterpolator
 
 
 class CubicInterpolator extends AbstractInterpolator
+	constructor: (array, config)->
+		@tangentFactor = 1 - Math.max 0, Math.min 1, config.cubicTension
+		super
+
 	# Cardinal spline with tension 0.5)
-	getTangent: (k) -> 0.5*(@getClippedInput(k + 1) - @getClippedInput(k - 1))
+	getTangent: (k) -> @tangentFactor*(@getClippedInput(k + 1) - @getClippedInput(k - 1))
 
 	interpolate: (t) ->
 		k = Math.floor t

@@ -19,6 +19,9 @@ under the permissive MIT license, so you can use it in just about any project.
 <a name = "rm-how" />
 # How do I use it?
 
+You can compile to javascript from the Smooth.coffee source file, or 
+[download the latest compiled release](https://github.com/downloads/osuushi/Smooth.js/Smooth-0.1.js)
+
 Smooth.js exposes one public function, `Smooth`. The simplest use case is like this:
 
 ```js
@@ -34,8 +37,8 @@ halfway between indexes 1 and 2 of the array, yielding 2.5
 <a name = "rm-config" />
 ##Configuration
 
-The `Smooth` function can take an object as an optional second argument. Currently, this object supports two
-options.
+The `Smooth` function can take an object as an optional second argument which specifies the configuration 
+options described below.
 
 <a name = "rm-method" />
 ### Interpolation Methods
@@ -72,8 +75,18 @@ This is the default interpolation method, which turns the array into a
 [cubic Hermite spline](http://en.wikipedia.org/wiki/Cubic_Hermite_spline). This method is very smooth and will
 not produce sharp corners.
 
-(Specifically, Smooth.js uses a
-[cardinal spline](http://en.wikipedia.org/wiki/Cardinal_spline#Cardinal_spline) with a tension of 0.5)
+The cubic Hermite spline used by Smooth.js is known as a 
+[cardinal spline](http://en.wikipedia.org/wiki/Cubic_hermite_spline#Cardinal_spline). This kind of spline 
+allows you to choose a "tension" parameter as the `cubicTension` field of the config object. Two constants are
+provided for this value: `Smooth.CUBIC_TENSION_DEFAULT` and `Smooth.CUBIC_TENSION_CATMULL_ROM`, but you can 
+use any value between 0 and 1.
+
+`Smooth.CUBIC_TENSION_CATMULL_ROM` produces a 
+[Catmull-Rom spline](http://en.wikipedia.org/wiki/Cubic_hermite_spline#Catmull.E2.80.93Rom_spline), which is commonly
+used for inbetweening keyframe animations. It is equal to a tension parameter of zero. It tends to cause 
+oscillation that is undesirable in some contexts.
+
+`Smooth.CUBIC_TENSION_DEFAULT` provides smooth results while avoiding undesirable oscillation. 
 
 <a name = "rm-clip" />
 ### Clipping modes
@@ -131,11 +144,14 @@ var points = [
 	[0, 1],
 	[4, 5],
 	[5, 3],
-	[2, 0],
-	[0, 1]
+	[2, 0]
 ];
 
-var path = Smooth(points, {method: Smooth.METHOD_CUBIC, clip:Smooth.CLIP_PERIODIC});
+var path = Smooth(points, {
+	method: Smooth.METHOD_CUBIC, 
+	clip: Smooth.CLIP_PERIODIC, 
+	cubicTension: Smooth.CUBIC_TENSION_CATMULL_ROM
+});
 ```
 
 could be used to create a path function along which to animate a sprite in a loop.
@@ -146,5 +162,4 @@ could be used to create a path function along which to animate a sprite in a loo
 
 * Interpolation of non-uniform arrays (objects with arbitrary numeric indexes)
 * More interpolation methods
-* Some control over tangent selection with cubic interpolation
 * Custom interpolation methods (maybe)
