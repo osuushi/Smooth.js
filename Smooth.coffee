@@ -12,7 +12,7 @@ Enum =
 	METHOD_LINEAR: 1 
 	METHOD_CUBIC: 2 # Default: cubic interpolation
 
-	###Input clipping types###
+	###Input clipping modes###
 	CLIP_CLAMP: 0 # Default: clamp to [0, arr.length-1]
 	CLIP_ZERO: 1 # When out of bounds, clip to zero
 	CLIP_PERIODIC: 2 # Repeat the array infinitely in either direction
@@ -58,7 +58,7 @@ class AbstractInterpolator
 				@clipHelperMirror
 			else
 				err = new Error
-				err.message = "The clipping type #{config.clip} is invalid."
+				err.message = "The clipping mode #{config.clip} is invalid."
 
     # Get input array value at i, applying the clipping method
 	getClippedInput: (i) ->
@@ -99,7 +99,7 @@ class LinearInterpolator extends AbstractInterpolator
 
 
 class CubicInterpolator extends AbstractInterpolator
-	# Finite difference (because of uniformity, equivalent to Cardinal spline with tension 0.5)
+	# Cardinal spline with tension 0.5)
 	getTangent: (k) -> 0.5*(@getClippedInput(k + 1) - @getClippedInput(k - 1))
 
 	interpolate: (t) ->
