@@ -1,0 +1,144 @@
+###
+Abstract scalar interpolation class which provides common functionality for all interpolators
+
+Subclasses must override interpolate().
+###
+
+
+###Constants (these are accessible by Smooth.WHATEVER in user space)###
+Enum = 
+	###Interpolation methods###
+	METHOD_NEAREST: 0 #Rounds to nearest whole index
+	METHOD_LINEAR: 1 # Default: linear interpolation
+	METHOD_CUBIC: 2
+
+	###Input clipping types###
+	CLIP_CLAMP: 0 # Default: clamp to [0, arr.length-1]
+	CLIP_ZERO: 1 # When out of bounds, clip to zero
+	CLIP_PERIODIC: 2 # Repeat the array infinitely in either direction
+	CLIP_MIRROR: 3 # Repeat infinitely in either direction, flipping each time
+
+
+defaultConfig = 
+	method: Enum.METHOD_LINEAR
+	clip: Enum.CLIP_CLAMP 
+
+
+
+###Index clipping functions###
+clipClamp = (i, n) -> Math.max 0, Math.min i, n - 1
+
+clipPeriodic = (i, n) ->
+	i = i % n #wrap
+	i += n if i < 0 #if negative, wrap back around
+	i
+
+clipMirror = (i, n) ->
+	period = 2*(n - 1) #period of index mirroring function
+	i = clipPeriodic i, period
+	i = period - i if i > n - 1 #flip when out of bounds 
+	i
+
+getFraction = (x) -> x - Math.floor x
+
+class AbstractInterpolator
+
+	constructor: (@array, config) ->
+		@length = @array.length #cache length
+
+		#Set the clipping helper method
+		@clipHelper = switch config.clip
+			when Enum.CLIP_CLAMP 
+				@clipHelperClamp
+			when Enum.CLIP_ZERO
+				@clipHelperZero
+			when Enum.CLIP_PERIODIC
+				@clipHelperPeriodic
+			when Enum.CLIP_MIRROR
+				@clipHelperMirror
+			else
+				err = new Error
+				err.message = "The clipping type #{config.clip} is invalid."
+
+    # Get input array value at i, applying the clipping method
+	getClippedInput: (i) ->
+		#Normal behavior for indexes within bounds
+		if 0 <= i < @length
+			@array[i]
+		else
+			@clipHelper i
+
+	clipHelperClamp: (i) -> @array[clipClamp i, @length]
+
+	clipHelperZero: (i) -> 0
+
+	clipHelperPeriodic: (i) -> @array[clipPeriodic i, @length]
+
+	clipHelperMirror: (i) -> @array[clipMirror i, @length]
+
+	interpolate: (t) ->
+		err = new Error
+		err.message = 'Subclasses of AbstractInterpolator must override the interpolate() method.'
+		throw err
+
+
+#Nearest neighbor interpolator (round to whole index)
+class NearestInterpolator extends AbstractInterpolator
+	interpolate: (t) -> @getClippedInput Math.round t
+
+
+#Linear interpolator (first order Bezier)
+class LinearInterpolator extends AbstractInterpolator
+	interpolate: (t) ->
+		i = Math.floor t
+		a = @getClippedInput i
+		b = @getClippedInput i+1
+		t = getFraction t
+		return (1-t)*a + (t)*b
+
+
+
+
+#Extract a column from a two dimensional array
+getColumn = (arr, i) -> (row[i] for row in arr)
+
+Smooth = (arr, config = {}) ->
+	config[k] ?= v for own k,v of defaultConfig #fill in defaults
+
+	#Get the interpolator class according to the configuration
+	interpolatorClass = switch config.method
+		when Enum.METHOD_NEAREST then NearestInterpolator
+		when Enum.METHOD_LINEAR then LinearInterpolator
+		when Enum.METHOD_CUBIC then CubicInterpolator
+		else
+			err = new Error
+			err.message = "The interpolation method #{config.method} is invalid."
+
+	#Make sure there's at least one element in the input array
+	if not arr.length
+		err = new Error
+		err.message = 'Array must have at least one element.'
+
+	#See what type of data we're dealing with
+	dataType = Object.prototype.toString.call arr[0]
+	switch dataType
+		when '[object Number]' #scalar
+			interpolator = new interpolatorClass arr, config
+			return (t) -> interpolator.interpolate t
+
+		when '[object Array]' # vector
+			interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...arr[0].length])
+			return (t) -> (interpolator.interpolate(t) for interpolator in interpolators)
+
+		else 
+			err = new Error
+			err.message = 'Invalid element type: #{dataType}'
+
+
+
+#Copy enums to Smooth
+Smooth[k] = v for own k,v of Enum
+
+
+root = exports ? window
+root.Smooth = Smooth
