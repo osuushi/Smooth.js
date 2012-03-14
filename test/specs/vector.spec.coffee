@@ -4,33 +4,8 @@
 
 describe 'Vector', ->
 	it 'should approximate a unit circle', ->
-		{SQRT2, SQRT1_2} = Math
-		SQRT3 = Math.sqrt(3)
-		circle_points = [
-			#Quadrant I
-			[1, 0]
-			[SQRT3/2, 1/2]
-			[SQRT1_2, SQRT1_2]
-			[1/2, SQRT3/2]
-
-			#Quadrant II
-			[0, 1]
-			[-1/2, SQRT3/2]
-			[-SQRT1_2, SQRT1_2]
-			[-SQRT3/2, 1/2]
-
-			#Quadrant III
-			[-1, 0]
-			[-SQRT3/2, -1/2]
-			[-SQRT1_2, -SQRT1_2]
-			[-1/2, -SQRT3/2]
-
-			#Quadrant IV
-			[0, -1]
-			[1/2, -SQRT3/2]
-			[SQRT1_2, -SQRT1_2]
-			[SQRT3/2, -1/2]
-		]
+		{sin, cos, PI} = Math
+		circle_points = ([cos(PI*t), sin(PI*t)] for t in [0...2] by 1/6)
 		#Make into a function
 		circle = Smooth circle_points, period:1, clip:Smooth.CLIP_PERIODIC
 
