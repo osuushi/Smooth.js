@@ -1,5 +1,5 @@
 ###
-Smooth.js version 0.1.1
+Smooth.js version 0.1.2
 
 Turn arrays into smooth functions.
 
@@ -23,7 +23,7 @@ Enum =
 	CLIP_MIRROR: 3 # Repeat infinitely in either direction, flipping each time
 
 	### Constants for control over the cubic interpolation tension ###
-	CUBIC_TENSION_DEFAULT: CUBIC_TENSION_CATMULL_ROM # Default tension value
+	CUBIC_TENSION_DEFAULT: 0 # Default tension value
 	CUBIC_TENSION_CATMULL_ROM: 0
 
 defaultConfig = 
