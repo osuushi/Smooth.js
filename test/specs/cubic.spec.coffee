@@ -3,7 +3,7 @@
 {deriv} = require './util.coffee'
 
 
-describe 'Linear Interpolator', ->
+describe 'Cubic Interpolator', ->
 	describe 'Catmull-Rom', ->
 		arr = [4,6,-2,3]
 		s = Smooth arr, method:Smooth.METHOD_CUBIC, cubicTension: Smooth.CATMULL_ROM
