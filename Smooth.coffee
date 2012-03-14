@@ -14,7 +14,6 @@ Enum =
 	###Interpolation methods###
 	METHOD_NEAREST: 0 #Rounds to nearest whole index
 	METHOD_LINEAR: 1 
-	METHOD_QUADRATIC: 2
 	METHOD_CUBIC: 3 # Default: cubic interpolation
 
 	###Input clipping modes###
@@ -134,39 +133,6 @@ class CubicInterpolator extends AbstractInterpolator
 		return (2*t3 - 3*t2 + 1)*p[0] + (t3 - 2*t2 + t)*m[0] + (-2*t3 + 3*t2)*p[1] + (t3 - t2)*m[1]
 
 
-class QuadraticInterpolator extends AbstractInterpolator
-	constructor: (array, config) ->
-		super
-		###Precalculate tangents###
-		tangents = @calculateTangents array[1] - array[0]
-		if config.clip is Enum.CLIP_PERIODIC
-			#For periodic clipping, use a second pass to smooth the seam between cycles
-			tangents = @calculateTangents tangents[tangents.length-1]
-
-		@tangents = Smooth tangents, clip:config.clip, method:Enum.METHOD_NEAREST
-
-
-	calculateTangents: (initialTangent) ->
-		tangents = [initialTangent]
-		for i in [1...@length]
-			a = @array[i - 1]
-			b = @array[i]
-			m = tangents[i-1]
-			tangents[i] = 2*(b - a) - m
-		return tangents
-
-
-	interpolate: (t) ->
-		k = Math.floor t
-		m = @tangents k
-		start = @getClippedInput k
-		end = @getClippedInput k + 1
-		a = end - start - m
-		b = m
-		c = start
-		t -= k
-		return a*t*t + b*t + c
-
 
 
 
@@ -192,7 +158,6 @@ Smooth = (arr, config = {}) ->
 		when Enum.METHOD_NEAREST then NearestInterpolator
 		when Enum.METHOD_LINEAR then LinearInterpolator
 		when Enum.METHOD_CUBIC then CubicInterpolator
-		when Enum.METHOD_QUADRATIC then QuadraticInterpolator
 		else
 			err = new Error
 			err.message = "The interpolation method #{config.method} is invalid."
