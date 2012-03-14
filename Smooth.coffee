@@ -12,15 +12,15 @@ Licensed under MIT license (see "Smooth.js MIT license.txt")
 ###Constants (these are accessible by Smooth.WHATEVER in user space)###
 Enum = 
 	###Interpolation methods###
-	METHOD_NEAREST: 0 #Rounds to nearest whole index
-	METHOD_LINEAR: 1 
-	METHOD_CUBIC: 3 # Default: cubic interpolation
+	METHOD_NEAREST: 'nearest' #Rounds to nearest whole index
+	METHOD_LINEAR: 'linear' 
+	METHOD_CUBIC: 'cubic' # Default: cubic interpolation
 
 	###Input clipping modes###
-	CLIP_CLAMP: 0 # Default: clamp to [0, arr.length-1]
-	CLIP_ZERO: 1 # When out of bounds, clip to zero
-	CLIP_PERIODIC: 2 # Repeat the array infinitely in either direction
-	CLIP_MIRROR: 3 # Repeat infinitely in either direction, flipping each time
+	CLIP_CLAMP: 'clamp' # Default: clamp to [0, arr.length-1]
+	CLIP_ZERO: 'zero' # When out of bounds, clip to zero
+	CLIP_PERIODIC: 'periodic' # Repeat the array infinitely in either direction
+	CLIP_MIRROR: 'mirror' # Repeat infinitely in either direction, flipping each time
 
 	### Constants for control over the cubic interpolation tension ###
 	CUBIC_TENSION_DEFAULT: 0 # Default tension value
