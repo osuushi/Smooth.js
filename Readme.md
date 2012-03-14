@@ -88,10 +88,9 @@ use any value between 0 and 1.
 
 `Smooth.CUBIC_TENSION_CATMULL_ROM` produces a 
 [Catmull-Rom spline](http://en.wikipedia.org/wiki/Cubic_hermite_spline#Catmull.E2.80.93Rom_spline), which is commonly
-used for inbetweening keyframe animations. It is equal to a tension parameter of zero. It tends to cause 
-oscillation that is undesirable in some contexts.
+used for inbetweening keyframe animations. It is equal to a tension parameter of zero.
 
-`Smooth.CUBIC_TENSION_DEFAULT` provides smooth results while avoiding undesirable oscillation. 
+`Smooth.CUBIC_TENSION_DEFAULT` is an alias for CUBIC_TENSION_CATMULL_ROM. 
 
 <a name = "rm-clip" />
 ### Clipping modes

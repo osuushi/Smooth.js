@@ -23,7 +23,7 @@ Enum =
 	CLIP_MIRROR: 3 # Repeat infinitely in either direction, flipping each time
 
 	### Constants for control over the cubic interpolation tension ###
-	CUBIC_TENSION_DEFAULT: 0.5 # Default tension value
+	CUBIC_TENSION_DEFAULT: CUBIC_TENSION_CATMULL_ROM # Default tension value
 	CUBIC_TENSION_CATMULL_ROM: 0
 
 defaultConfig = 
@@ -118,7 +118,7 @@ class CubicInterpolator extends AbstractInterpolator
 		super
 
 	# Cardinal spline with tension 0.5)
-	getTangent: (k) -> @tangentFactor*(@getClippedInput(k + 1) - @getClippedInput(k - 1))
+	getTangent: (k) -> @tangentFactor*(@getClippedInput(k + 1) - @getClippedInput(k - 1))/2
 
 	interpolate: (t) ->
 		k = Math.floor t
