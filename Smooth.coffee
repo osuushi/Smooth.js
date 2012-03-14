@@ -60,20 +60,21 @@ class AbstractInterpolator
 		@array = array.slice 0 #copy the array
 		@length = @array.length #cache length
 
+
+		clipHelpers = 
+			clamp: @clipHelperClamp
+			zero: @clipHelperZero
+			periodic: @clipHelperPeriodic
+			mirror: @clipHelperMirror
+
 		#Set the clipping helper method
-		@clipHelper = switch config.clip
-			when Enum.CLIP_CLAMP 
-				@clipHelperClamp
-			when Enum.CLIP_ZERO
-				@clipHelperZero
-			when Enum.CLIP_PERIODIC
-				@clipHelperPeriodic
-			when Enum.CLIP_MIRROR
-				@clipHelperMirror
-			else
-				err = new Error
-				err.message = "The clipping mode #{config.clip} is invalid."
-				throw err
+		@clipHelper = clipHelpers[config.clip]
+
+		unless @clipHelper?
+			err = new Error
+			err.message = "The clipping mode \"#{config.clip}\" is invalid."
+			throw err
+				
 
     # Get input array value at i, applying the clipping method
 	getClippedInput: (i) ->
@@ -154,14 +155,17 @@ Smooth = (arr, config = {}) ->
 	config[k] ?= v for own k,v of defaultConfig #fill in defaults
 
 	#Get the interpolator class according to the configuration
-	interpolatorClass = switch config.method
-		when Enum.METHOD_NEAREST then NearestInterpolator
-		when Enum.METHOD_LINEAR then LinearInterpolator
-		when Enum.METHOD_CUBIC then CubicInterpolator
-		else
-			err = new Error
-			err.message = "The interpolation method #{config.method} is invalid."
-			throw err
+	interpolatorClasses = 
+		nearest: NearestInterpolator
+		linear: LinearInterpolator
+		cubic: CubicInterpolator
+
+	interpolatorClass = interpolatorClasses[config.method]
+	
+	unless interpolatorClass?
+		err = new Error
+		err.message = "The interpolation method '#{config.method}' is invalid."
+		throw err
 
 	#Make sure there's at least one element in the input array
 	if arr.length < 2
