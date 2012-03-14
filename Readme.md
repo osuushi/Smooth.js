@@ -91,7 +91,7 @@ use any value between 0 and 1.
 [Catmull-Rom spline](http://en.wikipedia.org/wiki/Cubic_hermite_spline#Catmull.E2.80.93Rom_spline), which is commonly
 used for inbetweening keyframe animations. It is equal to a tension parameter of zero.
 
-`Smooth.CUBIC_TENSION_DEFAULT` is an alias for CUBIC_TENSION_CATMULL_ROM. 
+`Smooth.CUBIC_TENSION_DEFAULT` is an alias for `CUBIC_TENSION_CATMULL_ROM`.
 
 <a name = "rm-clip" />
 ### Clipping modes
@@ -141,12 +141,30 @@ animations, for example.
 <a name = "rm-scale" />
 ### Scaling
 
-The `scaleTo` config option allows you to scale the domain of the function. Its default value of 0 tells 
-Smooth.js to define the endpoint as the array length minus one. For example:
+The `scaleTo` config option allows you to scale the domain of the function. The default value is 0, which 
+tells Smooth.js to leave the domain like the original array, so that for any integer `i`, `s(i) == arr[i]`.
+
+Setting the `scaleTo` option to non-zero will scale the domain to that value. For example:
 
 ```js
-var s = Smooth([1,2,3], {scaleTo:1}); //scale domain so that endpoint is at t = 1
-console.log(s(0.5));	// => 2
+var s = Smooth([1,2,3], { scaleTo: 1 });
+console.log( s(0) );		// => 1
+console.log( s(1/2) );		// => 2
+console.log( s(1) );		// => 3
+```
+
+When using `Smooth.CLIP_PERIODIC`, the behavior of the `scaleTo` option is slightly different; instead of
+scaling to place the end of the array at the value of `scaleTo`, the value is used as the *period* of the
+function.
+
+For the sake of readability, the `period` config option is aliased to `scaleTo`. Thus:
+
+```js
+var s = Smooth([1,2,3], { period: 1, clip:Smooth.CLIP_PERIODIC });
+console.log( s(0) );		// => 1
+console.log( s(1/3) );		// => 2
+console.log( s(2/3) );		// => 3
+console.log( s(1) );		// => 1
 ```
 
 
