@@ -6,6 +6,7 @@
 [                Configuration](#rm-config)<br/>
 [                        Interpolation Methods](#rm-method)<br/>
 [                        Clipping Modes](#rm-clip)<br/>
+[                        Scaling](#rm-scale)<br/>
 [                Interpolating Vectors](#rm-vec)<br/>
 [        Future Plans](#rm-future)<br/>
 
@@ -28,8 +29,8 @@ Smooth.js exposes one public function, `Smooth`. The simplest use case is like t
 
 ```js
 var s = Smooth([1,2,3,4]);
-console.log(s(1));			// 2
-console.log(s(1.5));		// 2.5
+console.log(s(1));			// => 2
+console.log(s(1.5));		// => 2.5
 ```
 
 The first line will make `s` a function that interpolates the array [1,2,3,4] as a cubic spline. the second line
@@ -136,6 +137,18 @@ Smooth.CLIP_MIRROR
 Repeats the array infinitely in both directions, reflecting each time. For example, if you applied this to 
 `[1,2,3,4]` then the result would be `[1,2,3,4,3,2,1,2,3,4...]`. Useful for "loop back and forth" style 
 animations, for example.
+
+<a name = "rm-scale" />
+### Scaling
+
+The `scaleTo` config option allows you to scale the domain of the function. Its default value of 0 tells 
+Smooth.js to define the endpoint as the array length minus one. For example:
+
+```js
+var s = Smooth([1,2,3], {scaleTo:1}); //scale domain so that endpoint is at t = 1
+console.log(s(0.5));	// => 2
+```
+
 
 <a name = "rm-vec" />
 ##Interpolating Vectors
