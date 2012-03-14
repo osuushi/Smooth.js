@@ -14,7 +14,7 @@ describe 'Cubic Interpolator', ->
 			expect(s 2).toEqual arr[2]
 			expect(s 3).toEqual arr[3]
 
-		it 'should have neighbor-slope tangent at integer parameter', ->
+		it 'should have neighbor-slope tangent at integers', ->
 			expect(deriv(s) 1).toBeCloseTo (arr[2]-arr[0])/2
 			expect(deriv(s) 2).toBeCloseTo (arr[3]-arr[1])/2
 
@@ -30,7 +30,7 @@ describe 'Cubic Interpolator', ->
 			expect(s 2).toEqual arr[2]
 			expect(s 3).toEqual arr[3]
 
-		it 'should have zero derivatives at integer parameter', ->
+		it 'should have zero derivatives at integers', ->
 			expect(deriv(s) 0).toBeCloseTo 0
 			expect(deriv(s) 1).toBeCloseTo 0
 			expect(deriv(s) 2).toBeCloseTo 0
