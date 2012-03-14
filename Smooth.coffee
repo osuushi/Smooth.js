@@ -30,6 +30,7 @@ defaultConfig =
 	method: Enum.METHOD_CUBIC						#The interpolation method
 	cubicTension: Enum.CUBIC_TENSION_DEFAULT		#The cubic tension parameter
 	clip: Enum.CLIP_CLAMP 							#The clipping mode
+	scaleTo: 0										#The scale to value (0 means don't scale)
 
 
 ###Index clipping functions###
@@ -137,6 +138,11 @@ class CubicInterpolator extends AbstractInterpolator
 #Extract a column from a two dimensional array
 getColumn = (arr, i) -> (row[i] for row in arr)
 
+
+#Take a function with one parameter and apply a scale factor to its parameter
+makeScaledFunction = (f, scaleFactor) ->
+	(t) -> f(t*scaleFactor)
+
 Smooth = (arr, config = {}) ->
 	config[k] ?= v for own k,v of defaultConfig #fill in defaults
 
@@ -158,20 +164,25 @@ Smooth = (arr, config = {}) ->
 
 	#See what type of data we're dealing with
 	dataType = Object.prototype.toString.call arr[0]
-	switch dataType
-		when '[object Number]' #scalar
-			interpolator = new interpolatorClass arr, config
-			return (t) -> interpolator.interpolate t
 
-		when '[object Array]' # vector
-			interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...arr[0].length])
-			return (t) -> (interpolator.interpolate(t) for interpolator in interpolators)
+	smoothFunc = switch dataType
+			when '[object Number]' #scalar
+				interpolator = new interpolatorClass arr, config
+				(t) -> interpolator.interpolate t
 
-		else 
-			err = new Error
-			err.message = 'Invalid element type: #{dataType}'
-			throw err
+			when '[object Array]' # vector
+				interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...arr[0].length])
+				(t) -> (interpolator.interpolate(t) for interpolator in interpolators)
 
+			else 
+				err = new Error
+				err.message = 'Invalid element type: #{dataType}'
+				throw err
+
+	smoothFunc = makeScaledFunction smoothFunc, (arr.length-1)/config.scaleTo if config.scaleTo 
+
+
+	return smoothFunc
 
 
 #Copy enums to Smooth
