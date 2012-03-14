@@ -27,9 +27,9 @@ Enum =
 	CUBIC_TENSION_CATMULL_ROM: 0
 
 defaultConfig = 
-	method: Enum.METHOD_CUBIC
-	cubicTension: Enum.CUBIC_TENSION_DEFAULT
-	clip: Enum.CLIP_CLAMP 
+	method: Enum.METHOD_CUBIC						#The interpolation method
+	cubicTension: Enum.CUBIC_TENSION_DEFAULT		#The cubic tension parameter
+	clip: Enum.CLIP_CLAMP 							#The clipping mode
 
 
 ###Index clipping functions###
