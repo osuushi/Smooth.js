@@ -141,7 +141,10 @@ getColumn = (arr, i) -> (row[i] for row in arr)
 
 #Take a function with one parameter and apply a scale factor to its parameter
 makeScaledFunction = (f, scaleFactor) ->
-	(t) -> f(t*scaleFactor)
+	if scaleFactor is 1
+		f #don't wrap the function unecessarily
+	else 
+		(t) -> f(t*scaleFactor)
 
 Smooth = (arr, config = {}) ->
 	config[k] ?= v for own k,v of defaultConfig #fill in defaults
@@ -180,7 +183,6 @@ Smooth = (arr, config = {}) ->
 				throw err
 
 	smoothFunc = makeScaledFunction smoothFunc, (arr.length-1)/config.scaleTo if config.scaleTo 
-
 
 	return smoothFunc
 
