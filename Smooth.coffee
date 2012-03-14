@@ -182,7 +182,13 @@ Smooth = (arr, config = {}) ->
 				err.message = 'Invalid element type: #{dataType}'
 				throw err
 
-	smoothFunc = makeScaledFunction smoothFunc, (arr.length-1)/config.scaleTo if config.scaleTo 
+	if config.scaleTo 
+		#Because periodic functions repeat, we scale the domain to extend to the beginning of the next cycle.
+		if config.clip is Smooth.CLIP_PERIODIC
+			baseScale = arr.length
+		else #for other clipping types, we scale the domain to extend exactly to the end of the input array
+			baseScale = arr.length - 1
+		smoothFunc = makeScaledFunction smoothFunc, baseScale/config.scaleTo 
 
 	return smoothFunc
 
