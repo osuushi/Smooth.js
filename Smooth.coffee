@@ -147,6 +147,9 @@ makeScaledFunction = (f, scaleFactor) ->
 		(t) -> f(t*scaleFactor)
 
 Smooth = (arr, config = {}) ->
+	#Alias 'period' to 'scaleTo'
+	config.scaleTo ?= config.period
+	
 	config[k] ?= v for own k,v of defaultConfig #fill in defaults
 
 	#Get the interpolator class according to the configuration
