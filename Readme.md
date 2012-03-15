@@ -99,6 +99,41 @@ used for inbetweening keyframe animations. It is equal to a tension parameter of
 
 Time complexity to interpolate a point: O(1)
 
+#### Windowed sinc filter
+
+```js
+Smooth.METHOD_SINC = 'sinc'
+```
+
+Interpolate by applying a windowed version of the [sinc filter](http://en.wikipedia.org/wiki/Sinc_filter).
+
+You can specify the size of the window with the `sincFilterSize` config parameter. The window will extend by
+this value in either direction from the origin. This value must be a positive integer. The default is 2.
+
+You must also provide a window function via the `sincWindow` configuration option. This function should take
+one numeric parameter and return a numeric value. For example:
+
+```js
+var s = Smooth([1,2,3], {
+	method: 'sinc',
+	sincFilterSize: 2
+	sincWindow: function(t) { return Math.exp( -x*x); }
+});
+```
+
+will create a sinc filter with a Gaussian window function.
+
+The window function is implicitly further multiplied by a rectangular window determined by sincFilterSize, so
+
+```js
+	sincWindow: function(t) { return 1; }
+```
+
+will create a sinc filter with a simple rectangular window function.
+
+Time complexity to interpolate a point: O(N), where N = `sincFilterSize` (assuming your window function is
+O(1))
+
 #### Lanczos
 
 ```js
@@ -111,8 +146,9 @@ array by a Lanczos kernel to produce intermediate points. The Lanczos kernel is 
 The size of the Lanczos kernel can be specified via the `lanczosFilterSize` config parameter (default = 2). 
 This parameter should be a positive integer. \*
 
-\* The Lanczos kernel is defined as `l(x) = (-a < x < a) ? sinc(x)*sinc(x/a) : 0` , where `a` = 
-`lanczosFilterSize`.
+**Note:** This filter is actually a specific case of the sinc filter. The `lanczosFilterSize` config option
+is an alias for `sincFilterSize`, and the Lanczos window function is automatically created for you based on 
+this parameter. 
 
 Time complexity to interpolate a point: O(N), where N = `lanczosFilterSize`
 
