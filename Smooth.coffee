@@ -15,6 +15,7 @@ Enum =
 	METHOD_NEAREST: 'nearest' #Rounds to nearest whole index
 	METHOD_LINEAR: 'linear' 
 	METHOD_CUBIC: 'cubic' # Default: cubic interpolation
+	METHOD_LANCZOS: 'lanczos'
 
 	###Input clipping modes###
 	CLIP_CLAMP: 'clamp' # Default: clamp to [0, arr.length-1]
@@ -26,11 +27,13 @@ Enum =
 	CUBIC_TENSION_DEFAULT: 0 # Default tension value
 	CUBIC_TENSION_CATMULL_ROM: 0
 
+
 defaultConfig = 
 	method: Enum.METHOD_CUBIC						#The interpolation method
 	cubicTension: Enum.CUBIC_TENSION_DEFAULT		#The cubic tension parameter
 	clip: Enum.CLIP_CLAMP 							#The clipping mode
-	scaleTo: 0										#The scale to value (0 means don't scale)
+	scaleTo: 0										#The scale-to value (0 means don't scale)
+	lanczosFilterSize: 2							#The size of the lanczos filter kernel (must be an integer)
 
 
 ###Index clipping functions###
@@ -133,6 +136,28 @@ class CubicInterpolator extends AbstractInterpolator
 		#Apply cubic hermite spline formula
 		return (2*t3 - 3*t2 + 1)*p[0] + (t3 - 2*t2 + t)*m[0] + (-2*t3 + 3*t2)*p[1] + (t3 - t2)*m[1]
 
+{sin, PI} = Math
+sinc = (x) -> 
+	if x is 0 then 1
+	else sin(PI*x)/(PI*x)
+
+makeLanczosKernel = (a) ->
+	(x) -> if -a < x < a then sinc(x)*sinc(x/a) else 0 #lanczos kernel function
+
+class LanczosInterpolator extends AbstractInterpolator
+	constructor: (array, config) ->
+		super
+		#Create the lanczos kernel function
+		@a = config.lanczosFilterSize
+		@kernel = makeLanczosKernel @a
+
+	interpolate: (t) ->
+		k = Math.floor t
+		#Convolve with Lanczos kernel
+		sum = 0
+		for n in [(k - @a + 1)..(k + @a)]
+			sum += @kernel(t - n)*@getClippedInput(n)
+		sum
 
 
 
@@ -159,6 +184,7 @@ Smooth = (arr, config = {}) ->
 		nearest: NearestInterpolator
 		linear: LinearInterpolator
 		cubic: CubicInterpolator
+		lanczos: LanczosInterpolator
 
 	interpolatorClass = interpolatorClasses[config.method]
 	
