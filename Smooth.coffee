@@ -73,10 +73,7 @@ class AbstractInterpolator
 		#Set the clipping helper method
 		@clipHelper = clipHelpers[config.clip]
 
-		unless @clipHelper?
-			err = new Error
-			err.message = "The clipping mode \"#{config.clip}\" is invalid."
-			throw err
+		throw "Invalid clip: #{config.clip}" unless @clipHelper?
 				
 
     # Get input array value at i, applying the clipping method
@@ -95,10 +92,7 @@ class AbstractInterpolator
 
 	clipHelperMirror: (i) -> @array[clipMirror i, @length]
 
-	interpolate: (t) ->
-		err = new Error
-		err.message = 'Subclasses of AbstractInterpolator must override the interpolate() method.'
-		throw err
+	interpolate: (t) -> throw 'Subclasses of AbstractInterpolator must override the interpolate() method.'
 
 
 #Nearest neighbor interpolator (round to whole index)
@@ -161,7 +155,6 @@ class LanczosInterpolator extends AbstractInterpolator
 
 
 
-
 #Extract a column from a two dimensional array
 getColumn = (arr, i) -> (row[i] for row in arr)
 
@@ -188,16 +181,10 @@ Smooth = (arr, config = {}) ->
 
 	interpolatorClass = interpolatorClasses[config.method]
 	
-	unless interpolatorClass?
-		err = new Error
-		err.message = "The interpolation method '#{config.method}' is invalid."
-		throw err
+	throw "Invalid method: #{config.method}" unless interpolatorClass?
 
 	#Make sure there's at least one element in the input array
-	if arr.length < 2
-		err = new Error
-		err.message = 'Array must have at least two elements.'
-		throw err
+	throw 'Array must have at least two elements' if arr.length < 2
 
 	#See what type of data we're dealing with
 	dataType = Object.prototype.toString.call arr[0]
@@ -208,13 +195,11 @@ Smooth = (arr, config = {}) ->
 				(t) -> interpolator.interpolate t
 
 			when '[object Array]' # vector
+				throw 'Vectors must be non-empty' unless arr[0][0]?
 				interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...arr[0].length])
 				(t) -> (interpolator.interpolate(t) for interpolator in interpolators)
 
-			else 
-				err = new Error
-				err.message = 'Invalid element type: #{dataType}'
-				throw err
+			else throw "Invalid element type: #{dataType}"
 
 	if config.scaleTo 
 		#Because periodic functions repeat, we scale the domain to extend to the beginning of the next cycle.
