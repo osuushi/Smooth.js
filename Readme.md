@@ -61,6 +61,8 @@ Smooth.METHOD_NEAREST = 'nearest'
 This interpolation method is like stair steps. The parameter is simply rounded to the nearest integer and 
 that element of the array is returned.
 
+Time complexity to interpolate a point: O(1)
+
 #### Linear
 
 ```js
@@ -70,6 +72,8 @@ Smooth.METHOD_LINEAR = 'linear'
 Linear interpolation creates line segments between the input points and interpolates along those segments. 
 While smoother than nearest neighbor, this interpolation method produces sharp corners where the parameter is
 an integer.
+
+Time complexity to interpolate a point: O(1)
 
 #### Cubic
 
@@ -93,6 +97,8 @@ used for inbetweening keyframe animations. It is equal to a tension parameter of
 
 `Smooth.CUBIC_TENSION_DEFAULT` is an alias for `CUBIC_TENSION_CATMULL_ROM`.
 
+Time complexity to interpolate a point: O(1)
+
 #### Lanczos
 
 ```js
@@ -107,6 +113,8 @@ This parameter should be a positive integer. \*
 
 \* The Lanczos kernel is defined as `l(x) = (-a < x < a) ? sinc(x)*sinc(x/a) : 0` , where `a` = 
 `lanczosFilterSize`.
+
+Time complexity to interpolate a point: O(N), where N = `lanczosFilterSize`
 
 <a name = "rm-clip" />
 ### Clipping modes
