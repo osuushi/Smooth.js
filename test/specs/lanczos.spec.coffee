@@ -13,10 +13,10 @@ describe 'Lanczos Interpolator', ->
 	it 'should be continuous everywhere', ->
 		delta = 0.00001
 		for i in [-1..arr.length] by 1/64
-			expect(s i).toBeCloseTo s(i+delta), 0
+			expect(s i).toBeCloseTo s(i-delta), 0
 
 	it 'should be differentiable everywhere', ->
 		delta = 0.00001
 		ds = deriv s
 		for i in [-1..arr.length] by 1/64
-			expect(ds i).toBeCloseTo ds(i+delta), 0
+			expect(ds i).toBeCloseTo ds(i-delta), 0

@@ -16,6 +16,7 @@ Enum =
 	METHOD_LINEAR: 'linear' 
 	METHOD_CUBIC: 'cubic' # Default: cubic interpolation
 	METHOD_LANCZOS: 'lanczos'
+	METHOD_SINC: 'sinc'
 
 	###Input clipping modes###
 	CLIP_CLAMP: 'clamp' # Default: clamp to [0, arr.length-1]
@@ -33,8 +34,8 @@ defaultConfig =
 	cubicTension: Enum.CUBIC_TENSION_DEFAULT		#The cubic tension parameter
 	clip: Enum.CLIP_CLAMP 							#The clipping mode
 	scaleTo: 0										#The scale-to value (0 means don't scale)
-	lanczosFilterSize: 2							#The size of the lanczos filter kernel (must be an integer)
-
+	sincFilterSize: 2								#The size of the sinc filter kernel (must be an integer)
+	sincWindow: undefined							#The window function for the sinc filter
 
 ###Index clipping functions###
 clipClamp = (i, n) -> Math.max 0, Math.min i, n - 1
@@ -135,15 +136,21 @@ sinc = (x) ->
 	if x is 0 then 1
 	else sin(PI*x)/(PI*x)
 
-makeLanczosKernel = (a) ->
-	(x) -> if -a < x < a then sinc(x)*sinc(x/a) else 0 #lanczos kernel function
+makeLanczosWindow = (a) ->
+	(x) -> sinc(x/a) #lanczos window
 
-class LanczosInterpolator extends AbstractInterpolator
+makeSincKernel = (window) ->
+	(x) -> sinc(x)*window(x)
+
+class SincFilterInterpolator extends AbstractInterpolator
 	constructor: (array, config) ->
 		super
 		#Create the lanczos kernel function
-		@a = config.lanczosFilterSize
-		@kernel = makeLanczosKernel @a
+		@a = config.sincFilterSize
+
+		window = config.sincWindow
+		throw 'No sincWindow provided' unless window?
+		@kernel = makeSincKernel window
 
 	interpolate: (t) ->
 		k = Math.floor t
@@ -152,7 +159,6 @@ class LanczosInterpolator extends AbstractInterpolator
 		for n in [(k - @a + 1)..(k + @a)]
 			sum += @kernel(t - n)*@getClippedInput(n)
 		sum
-
 
 
 #Extract a column from a two dimensional array
@@ -170,6 +176,9 @@ Smooth = (arr, config = {}) ->
 	#Alias 'period' to 'scaleTo'
 	config.scaleTo ?= config.period
 
+	#Alias lanczosFilterSize to sincFilterSize
+	config.sincFilterSize ?= config.lanczosFilterSize
+
 	config[k] ?= v for own k,v of defaultConfig #fill in defaults
 
 	#Get the interpolator class according to the configuration
@@ -177,11 +186,18 @@ Smooth = (arr, config = {}) ->
 		nearest: NearestInterpolator
 		linear: LinearInterpolator
 		cubic: CubicInterpolator
-		lanczos: LanczosInterpolator
+		lanczos: SincFilterInterpolator #lanczos is a specific case of sinc filter
+		sinc: SincFilterInterpolator
+
 
 	interpolatorClass = interpolatorClasses[config.method]
 	
 	throw "Invalid method: #{config.method}" unless interpolatorClass?
+
+	if config.method is 'lanczos'
+		#Setup lanczos window
+		config.sincWindow = makeLanczosWindow config.sincFilterSize
+
 
 	#Make sure there's at least one element in the input array
 	throw 'Array must have at least two elements' if arr.length < 2

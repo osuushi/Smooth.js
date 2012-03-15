@@ -17,3 +17,6 @@ describe 'Exceptions', ->
 		expect(-> Smooth ['a','b']).toThrow 'Invalid element type: [object String]'
 		expect(-> Smooth [(->), (->)]).toThrow 'Invalid element type: [object Function]'
 		expect(-> Smooth [[], []]).toThrow 'Vectors must be non-empty'
+
+	it 'should throw for sinc filter with no window', ->
+		expect(-> Smooth [1,2], method:'sinc').toThrow 'No sincWindow provided'
