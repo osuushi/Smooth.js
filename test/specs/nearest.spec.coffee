@@ -18,8 +18,8 @@ describe 'Nearest Neighbor Interpolator', ->
 		expect(s 2.2).toEqual arr[2]
 		expect(s 2.8).toEqual arr[3]
 	
-	it 'should have zero derivatives for fractions', ->
-		expect(deriv(s) 0.1).toBeCloseTo 0
+	it 'should have zero derivatives where fraction != .5', ->
+		expect(deriv(s) 1).toBeCloseTo 0
 		expect(deriv(s) 1.1).toBeCloseTo 0
 		expect(deriv(s) 1.9).toBeCloseTo 0
 		expect(deriv(s) 3.2).toBeCloseTo 0
