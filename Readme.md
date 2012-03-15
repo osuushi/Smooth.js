@@ -55,7 +55,7 @@ option:
 #### Nearest Neighbor
 
 ```js
-Smooth.METHOD_NEAREST
+Smooth.METHOD_NEAREST = 'nearest'
 ```
 
 This interpolation method is like stair steps. The parameter is simply rounded to the nearest integer and 
@@ -64,7 +64,7 @@ that element of the array is returned.
 #### Linear
 
 ```js
-Smooth.METHOD_LINEAR
+Smooth.METHOD_LINEAR = 'linear'
 ```
 
 Linear interpolation creates line segments between the input points and interpolates along those segments. 
@@ -74,7 +74,7 @@ an integer.
 #### Cubic
 
 ```js
-Smooth.METHOD_CUBIC
+Smooth.METHOD_CUBIC = 'cubic'
 ```
 
 This is the default interpolation method, which turns the array into a 
@@ -105,7 +105,7 @@ The `clip` config option specifies the clipping mode, and can take the following
 #### Clamp
 
 ```js
-Smooth.CLIP_CLAMP
+Smooth.CLIP_CLAMP = 'clamp'
 ```
 
 The default clipping mode; the ends of the array are simply repeated to infinity.
@@ -113,7 +113,7 @@ The default clipping mode; the ends of the array are simply repeated to infinity
 #### Zero
 
 ```js
-Smooth.CLIP_ZERO
+Smooth.CLIP_ZERO = 'zero'
 ```
 
 Outside the array bounds, the value drops to zero.
@@ -121,7 +121,7 @@ Outside the array bounds, the value drops to zero.
 #### Periodic
 
 ```js
-Smooth.CLIP_PERIODIC
+Smooth.CLIP_PERIODIC = 'periodic'
 ```
 
 The whole array repeats infinitely in both directions. This is useful, for example, if you want values for a
@@ -131,7 +131,7 @@ looping animation.
 #### Mirror
 
 ```js
-Smooth.CLIP_MIRROR
+Smooth.CLIP_MIRROR = 'mirror'
 ```
 
 Repeats the array infinitely in both directions, reflecting each time. For example, if you applied this to 
