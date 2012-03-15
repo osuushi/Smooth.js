@@ -93,6 +93,21 @@ used for inbetweening keyframe animations. It is equal to a tension parameter of
 
 `Smooth.CUBIC_TENSION_DEFAULT` is an alias for `CUBIC_TENSION_CATMULL_ROM`.
 
+#### Lanczos
+
+```js
+Smooth.METHOD_LANCZOS = 'lanczos'
+```
+
+Interpolate via [Lanczos resampling](http://en.wikipedia.org/wiki/Lanczos_resampling). Convolves the input
+array by a Lanczos kernel to produce intermediate points. The Lanczos kernel is given by the pseudocode
+
+The size of the Lanczos kernel can be specified via the `lanczosFilterSize` config parameter (default = 2). 
+This parameter should be a positive integer. \*
+
+\* The Lanczos kernel is defined as `l(x) = (-a < x < a) ? sinc(x)*sinc(x/a) : 0` , where `a` = 
+`lanczosFilterSize`.
+
 <a name = "rm-clip" />
 ### Clipping modes
 
