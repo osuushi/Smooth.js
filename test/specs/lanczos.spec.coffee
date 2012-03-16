@@ -20,3 +20,8 @@ describe 'Lanczos Interpolator', ->
 		ds = deriv s
 		for i in [-1..arr.length] by 1/64
 			expect(ds i).toBeCloseTo ds(i-delta), 0
+
+	it 'should repeat when periodic', ->
+		p = Smooth arr, method:'lanczos', clip: 'periodic', scaleTo: 1
+		for i in [-2..2] by 1/16
+			expect(p i).toEqual p i - Math.floor i

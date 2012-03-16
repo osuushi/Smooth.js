@@ -23,3 +23,8 @@ describe 'Nearest Neighbor Interpolator', ->
 		expect(deriv(s) 1.1).toBeCloseTo 0
 		expect(deriv(s) 1.9).toBeCloseTo 0
 		expect(deriv(s) 3.2).toBeCloseTo 0
+
+	it 'should repeat when periodic', ->
+		p = Smooth arr, method:'nearest', clip: 'periodic', scaleTo: 1
+		for i in [-2..2] by 1/16
+			expect(p i).toEqual p i - Math.floor i

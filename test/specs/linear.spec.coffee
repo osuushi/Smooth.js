@@ -23,3 +23,8 @@ describe 'Linear Interpolator', ->
 		expect(deriv(s) 0.8).toBeCloseTo arr[1] - arr[0]
 		expect(deriv(s) 1.4).toBeCloseTo arr[2] - arr[1]
 		expect(deriv(s) 2.7).toBeCloseTo arr[3] - arr[2]
+
+	it 'should repeat when periodic', ->
+		p = Smooth arr, method:'linear', clip: 'periodic', scaleTo: 1
+		for i in [-2..2] by 1/16
+			expect(p i).toEqual p i - Math.floor i
