@@ -35,3 +35,6 @@ describe "Scale to...", ->
 
 	it 'should scale to the next cycle for periodic functions', ->
 		s = Smooth arr, scaleTo: 1, clip:Smooth.CLIP_PERIODIC
+		expect(s 0).toBeCloseTo s 1
+		expect(s 0.5).toBeCloseTo s 2.5
+		expect(s 3.8).toBeCloseTo s -9.2
