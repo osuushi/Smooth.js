@@ -7,6 +7,7 @@
 [                        Interpolation Methods](#rm-method)<br/>
 [                        Clipping Modes](#rm-clip)<br/>
 [                        Scaling](#rm-scale)<br/>
+[                        Validation](#rm-valid)<br/>
 [                Interpolating Vectors](#rm-vec)<br/>
 [        Future Plans](#rm-future)<br/>
 
@@ -117,7 +118,7 @@ one numeric parameter and return a numeric value. For example:
 var s = Smooth([1,2,3], {
 	method: 'sinc',
 	sincFilterSize: 2
-	sincWindow: function(t) { return Math.exp( -x*x); }
+	sincWindow: function(x) { return Math.exp( -x*x); }
 });
 ```
 
@@ -126,7 +127,7 @@ will create a sinc filter with a Gaussian window function.
 The window function is implicitly further multiplied by a rectangular window determined by sincFilterSize, so
 
 ```js
-	sincWindow: function(t) { return 1; }
+	sincWindow: function(x) { return 1; }
 ```
 
 will create a sinc filter with a simple rectangular window function.
@@ -141,10 +142,10 @@ Smooth.METHOD_LANCZOS = 'lanczos'
 ```
 
 Interpolate via [Lanczos resampling](http://en.wikipedia.org/wiki/Lanczos_resampling). Convolves the input
-array by a Lanczos kernel to produce intermediate points. The Lanczos kernel is given by the pseudocode
+array by a Lanczos kernel to produce intermediate points.
 
 The size of the Lanczos kernel can be specified via the `lanczosFilterSize` config parameter (default = 2). 
-This parameter should be a positive integer. \*
+This parameter should be a positive integer.
 
 **Note:** This filter is actually a specific case of the sinc filter. The `lanczosFilterSize` config option
 is an alias for `sincFilterSize`, and the Lanczos window function is automatically created for you based on 
@@ -225,6 +226,21 @@ console.log( s(1/3) );		// => 2
 console.log( s(2/3) );		// => 3
 console.log( s(1) );		// => 1
 ```
+
+<a name="rm-valid" />
+###Validation
+
+By default the input array you pass to `Smooth` will be examined thoroughly to make sure that the input is 
+valid, and exceptions will be thrown if any problems are found. This can be a performance consideration if you
+are dealing with large amounts of data.
+
+This deep validation behavior can be disabled globally like so:
+
+```js
+Smooth.deepValidation = false;
+```
+
+This will cause the Smooth function to only validate the first element of each array, and only minimally.
 
 
 <a name = "rm-vec" />
