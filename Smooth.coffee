@@ -1,5 +1,5 @@
 ###
-Smooth.js version 0.1.3
+Smooth.js version 0.1.5
 
 Turn arrays into smooth functions.
 

@@ -24,7 +24,7 @@ under the permissive MIT license, so you can use it in just about any project.
 # How do I use it?
 
 You can compile to javascript from the Smooth.coffee source file, or 
-[download the latest compiled release](https://github.com/downloads/osuushi/Smooth.js/Smooth-0.1.3.js)
+[download the latest compiled release](https://github.com/downloads/osuushi/Smooth.js/Smooth-0.1.5.js)
 
 Smooth.js exposes one public function, `Smooth`. The simplest use case is like this:
 
