@@ -21,6 +21,13 @@ describe 'Exceptions', ->
 	it 'should throw for sinc filter with no window', ->
 		expect(-> Smooth [1,2], method:'sinc').toThrow 'No sincWindow provided'
 
+	it 'should throw for invalid scaleTo', ->
+		expect(-> Smooth [1,2], scaleTo:[1]).toThrow 'scaleTo param must be number or array of two numbers'
+		expect(-> Smooth [1,2], scaleTo:[1,2,3]).toThrow 'scaleTo param must be number or array of two numbers'
+		expect(-> Smooth [1,2], scaleTo:'a').toThrow 'scaleTo param must be number or array of two numbers'
+		expect(-> Smooth [1,2], scaleTo:[1,'x']).toThrow 'scaleTo param must be number or array of two numbers'
+		expect(-> Smooth [1,2], scaleTo:Infinity).toThrow 'scaleTo param must be number or array of two numbers'
+
 	describe 'With deep validation on...', ->
 		it 'should throw for bad input deep inside the input', ->
 			Smooth.deepValidation = true
@@ -48,3 +55,4 @@ describe 'Exceptions', ->
 
 			expect(Smooth [[1], 1]).toBeTruthy()
 			expect(Smooth [[1], [1,2]]).toBeTruthy()
+

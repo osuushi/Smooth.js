@@ -36,7 +36,7 @@ defaultConfig =
 	
 	clip: Enum.CLIP_CLAMP                           #The clipping mode
 	
-	scaleTo: 0                                      #The scale-to value (0 means don't scale)
+	scaleTo: 0                                      #The scale-to value (0 means don't scale) (can also be a range)
 	
 	sincFilterSize: 2                               #The size of the sinc filter kernel (must be an integer)
 
@@ -171,11 +171,13 @@ getColumn = (arr, i) -> (row[i] for row in arr)
 
 
 #Take a function with one parameter and apply a scale factor to its parameter
-makeScaledFunction = (f, scaleFactor) ->
-	if scaleFactor is 1
+makeScaledFunction = (f, baseScale, scaleRange) ->
+	if scaleRange.join is '0,1'
 		f #don't wrap the function unecessarily
 	else 
-		(t) -> f(t*scaleFactor)
+		scaleFactor = baseScale/(scaleRange[1] - scaleRange[0])
+		translation = scaleRange[0]
+		(t) -> f scaleFactor*(t - translation)
 
 
 getType = (x) -> Object::toString.call(x)[('[object '.length)...-1]
@@ -193,6 +195,19 @@ validateVector = (v, dimension) ->
 	throw 'Inconsistent dimension in Smooth() input' unless v.length is dimension
 	validateNumber n for n in v
 
+isValidNumber = (n) -> (getType(n) is 'Number') and isFinite(n) and not isNaN(n)
+
+normalizeScaleTo = (s) ->
+	invalidErr = "scaleTo param must be number or array of two numbers"
+	switch getType s
+		when 'Number'
+			throw invalidErr unless isValidNumber s
+			s = [0, s]
+		when 'Array'
+			throw invalidErr unless s.length is 2
+			throw invalidErr unless isValidNumber(s[0]) and isValidNumber(s[1])
+		else throw invalidErr
+	return s
 
 
 Smooth = (arr, config = {}) ->
@@ -249,13 +264,14 @@ Smooth = (arr, config = {}) ->
 
 			else throw "Invalid element type: #{dataType}"
 
-	if config.scaleTo 
+	if config.scaleTo
+		scaleRange = normalizeScaleTo config.scaleTo
 		#Because periodic functions repeat, we scale the domain to extend to the beginning of the next cycle.
 		if config.clip is Smooth.CLIP_PERIODIC
 			baseScale = arr.length
 		else #for other clipping types, we scale the domain to extend exactly to the end of the input array
 			baseScale = arr.length - 1
-		smoothFunc = makeScaledFunction smoothFunc, baseScale/config.scaleTo 
+		smoothFunc = makeScaledFunction smoothFunc, baseScale, scaleRange
 
 	return smoothFunc
 

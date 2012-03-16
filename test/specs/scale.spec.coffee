@@ -38,3 +38,19 @@ describe "Scale to...", ->
 		expect(s 0).toBeCloseTo s 1
 		expect(s 0.5).toBeCloseTo s 2.5
 		expect(s 3.8).toBeCloseTo s -9.2
+
+	describe 'range scaling', ->
+		it 'should scale to [-1, 1]', ->
+			s = Smooth arr, scaleTo: [-1, 1]
+			expect(s -1).toBeCloseTo arr[0]
+			expect(s -1/3).toBeCloseTo arr[1]
+			expect(s 1/3).toBeCloseTo arr[2]
+			expect(s 1).toBeCloseTo arr[3]
+
+		it 'should scale periodic to [0.5, 1.5]', ->
+			s = Smooth arr, scaleTo: [0.5, 1.5], clip:'periodic'
+			expect(s 0).toBeCloseTo s 1
+			expect(s 0.5).toBeCloseTo s 2.5
+			expect(s 3.8).toBeCloseTo s -9.2
+
+
