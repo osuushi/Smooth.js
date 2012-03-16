@@ -30,12 +30,21 @@ Enum =
 
 
 defaultConfig = 
-	method: Enum.METHOD_CUBIC						#The interpolation method
-	cubicTension: Enum.CUBIC_TENSION_DEFAULT		#The cubic tension parameter
-	clip: Enum.CLIP_CLAMP 							#The clipping mode
-	scaleTo: 0										#The scale-to value (0 means don't scale)
-	sincFilterSize: 2								#The size of the sinc filter kernel (must be an integer)
-	sincWindow: undefined							#The window function for the sinc filter
+	method: Enum.METHOD_CUBIC                       #The interpolation method
+	
+	cubicTension: Enum.CUBIC_TENSION_DEFAULT        #The cubic tension parameter
+	
+	clip: Enum.CLIP_CLAMP                           #The clipping mode
+	
+	scaleTo: 0                                      #The scale-to value (0 means don't scale)
+	
+	sincFilterSize: 2                               #The size of the sinc filter kernel (must be an integer)
+
+	sincWindow: undefined                           #The window function for the sinc filter
+
+	deepValidation: true                            #If true, dig through all data to make sure it is valid 
+	                                                #and propely structured. If false, only do the minimum
+	                                                #validation possible.
 
 ###Index clipping functions###
 clipClamp = (i, n) -> Math.max 0, Math.min i, n - 1
@@ -172,6 +181,24 @@ makeScaledFunction = (f, scaleFactor) ->
 	else 
 		(t) -> f(t*scaleFactor)
 
+
+getType = (x) -> Object::toString.call(x)[('[object '.length)...-1]
+
+#Throw exception if input is not a number
+validateNumber = (n) ->
+	throw 'NaN in Smooth() input' if isNaN n
+	throw 'Non-number in Smooth() input' unless getType(n) is 'Number'
+	throw 'Infinity in Smooth() input' unless isFinite n
+		
+
+#Throw an exception if input is not a vector of numbers which is the correct length
+validateVector = (v, dimension) ->
+	throw 'Non-vector in Smooth() input' unless getType(v) is 'Array'
+	throw 'Inconsistent dimension in Smooth() input' unless v.length is dimension
+	validateNumber n for n in v
+
+
+
 Smooth = (arr, config = {}) ->
 	#Alias 'period' to 'scaleTo'
 	config.scaleTo ?= config.period
@@ -203,16 +230,25 @@ Smooth = (arr, config = {}) ->
 	throw 'Array must have at least two elements' if arr.length < 2
 
 	#See what type of data we're dealing with
-	dataType = Object.prototype.toString.call arr[0]
+	dataType = getType arr[0]
 
 	smoothFunc = switch dataType
-			when '[object Number]' #scalar
+			when 'Number' #scalar
+				#Validate all input if deep validation is on
+				validateNumber n for n in arr if config.deepValidation
+				#Create the interpolator
 				interpolator = new interpolatorClass arr, config
+				#make function that runs the interpolator
 				(t) -> interpolator.interpolate t
 
-			when '[object Array]' # vector
-				throw 'Vectors must be non-empty' unless arr[0][0]?
-				interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...arr[0].length])
+			when 'Array' # vector
+				dimension = arr[0].length
+				throw 'Vectors must be non-empty' unless dimension
+				#Validate all input if deep validation is on
+				validateVector v, dimension for v in arr if config.deepValidation
+				#Create interpolator for each column
+				interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...dimension])
+				#make function that runs the interpolators and puts them into an array
 				(t) -> (interpolator.interpolate(t) for interpolator in interpolators)
 
 			else throw "Invalid element type: #{dataType}"
