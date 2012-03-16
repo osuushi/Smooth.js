@@ -213,6 +213,16 @@ console.log( s(1/2) );		// => 2
 console.log( s(1) );		// => 3
 ```
 
+You can also provide a range for the `scaleTo` option, as an array of two numbers. This will scale the 
+function to fit in that range. For example
+
+```js
+var s = Smooth([1,2,3], { scaleTo: [10,12] });
+console.log( s(10) );		// => 1
+console.log( s(12) );		// => 2
+console.log( s(14) );		// => 3
+```
+
 When using `Smooth.CLIP_PERIODIC`, the behavior of the `scaleTo` option is slightly different; instead of
 scaling to place the end of the array at the value of `scaleTo`, the value is used as the *period* of the
 function.
