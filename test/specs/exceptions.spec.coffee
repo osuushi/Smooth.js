@@ -23,6 +23,7 @@ describe 'Exceptions', ->
 
 	describe 'With deep validation on...', ->
 		it 'should throw for bad input deep inside the input', ->
+			Smooth.deepValidation = true
 			expect(-> Smooth [1,2,'a']).toThrow 'NaN in Smooth() input'
 			expect(-> Smooth [1,2,'3']).toThrow 'Non-number in Smooth() input'
 			expect(-> Smooth [1,2, Infinity]).toThrow 'Infinity in Smooth() input'
@@ -36,13 +37,14 @@ describe 'Exceptions', ->
 
 	describe 'With deep validation off...', ->
 		it 'should not throw for bad input deep inside the input', ->
-			expect(Smooth [1,2,'a'], deepValidation:false).toBeTruthy()
-			expect(Smooth [1,2,'3'], deepValidation:false).toBeTruthy()
-			expect(Smooth [1,2, Infinity], deepValidation:false).toBeTruthy()
+			Smooth.deepValidation = false
+			expect(Smooth [1,2,'a']).toBeTruthy()
+			expect(Smooth [1,2,'3']).toBeTruthy()
+			expect(Smooth [1,2, Infinity]).toBeTruthy()
 
-			expect(Smooth [[1],[2],['a']], deepValidation:false).toBeTruthy()
-			expect(Smooth [[1],[2],['3']], deepValidation:false).toBeTruthy()
-			expect(Smooth [[1],[2], [Infinity]], deepValidation:false).toBeTruthy()
+			expect(Smooth [[1],[2],['a']]).toBeTruthy()
+			expect(Smooth [[1],[2],['3']]).toBeTruthy()
+			expect(Smooth [[1],[2], [Infinity]]).toBeTruthy()
 
-			expect(Smooth [[1], 1], deepValidation:false).toBeTruthy()
-			expect(Smooth [[1], [1,2]], deepValidation:false).toBeTruthy()
+			expect(Smooth [[1], 1]).toBeTruthy()
+			expect(Smooth [[1], [1,2]]).toBeTruthy()

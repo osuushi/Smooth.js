@@ -42,10 +42,6 @@ defaultConfig =
 
 	sincWindow: undefined                           #The window function for the sinc filter
 
-	deepValidation: true                            #If true, dig through all data to make sure it is valid 
-	                                                #and propely structured. If false, only do the minimum
-	                                                #validation possible.
-
 ###Index clipping functions###
 clipClamp = (i, n) -> Math.max 0, Math.min i, n - 1
 
@@ -235,7 +231,7 @@ Smooth = (arr, config = {}) ->
 	smoothFunc = switch dataType
 			when 'Number' #scalar
 				#Validate all input if deep validation is on
-				validateNumber n for n in arr if config.deepValidation
+				validateNumber n for n in arr if Smooth.deepValidation
 				#Create the interpolator
 				interpolator = new interpolatorClass arr, config
 				#make function that runs the interpolator
@@ -245,7 +241,7 @@ Smooth = (arr, config = {}) ->
 				dimension = arr[0].length
 				throw 'Vectors must be non-empty' unless dimension
 				#Validate all input if deep validation is on
-				validateVector v, dimension for v in arr if config.deepValidation
+				validateVector v, dimension for v in arr if Smooth.deepValidation
 				#Create interpolator for each column
 				interpolators = (new interpolatorClass(getColumn(arr, i), config) for i in [0...dimension])
 				#make function that runs the interpolators and puts them into an array
@@ -267,6 +263,8 @@ Smooth = (arr, config = {}) ->
 #Copy enums to Smooth
 Smooth[k] = v for own k,v of Enum
 
+
+Smooth.deepValidation = true
 
 root = exports ? window
 root.Smooth = Smooth
