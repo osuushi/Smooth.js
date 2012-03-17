@@ -11,6 +11,8 @@ This is a log of changes to the library itself. Other changes, like tests, are o
 * Deep input validation; input arrays are now thoroughly examined when calling `Smooth()`. Disable with 
 `Smooth.deepValidation = false`. 
 
+* `scaleTo` with ranges; you can now scale the function's domain to fit to a specific range.
+
 
 ##0.1.3
 
