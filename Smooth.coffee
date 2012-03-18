@@ -209,8 +209,14 @@ normalizeScaleTo = (s) ->
 		else throw invalidErr
 	return s
 
+shallowCopy = (obj) ->
+	copy = {}
+	copy[k] = v for own k,v of obj
+	copy
 
 Smooth = (arr, config = {}) ->
+	#Make a copy of the config object
+	config = shallowCopy config
 	#Alias 'period' to 'scaleTo'
 	config.scaleTo ?= config.period
 
