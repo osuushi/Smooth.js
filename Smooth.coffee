@@ -1,5 +1,5 @@
 ###
-Smooth.js version 0.1.5
+Smooth.js version 0.1.6
 
 Turn arrays into smooth functions.
 
@@ -215,8 +215,14 @@ shallowCopy = (obj) ->
 	copy
 
 Smooth = (arr, config = {}) ->
-	#Make a copy of the config object
+	#Properties to copy to the function once it is created
+	properties = {}
+	#Make a copy of the config object to modify
 	config = shallowCopy config
+
+	#Make another copy of the config object to save to the function
+	properties.config = shallowCopy config
+
 	#Alias 'period' to 'scaleTo'
 	config.scaleTo ?= config.period
 
@@ -246,11 +252,15 @@ Smooth = (arr, config = {}) ->
 	#Make sure there's at least one element in the input array
 	throw 'Array must have at least two elements' if arr.length < 2
 
+	#save count property
+	properties.count = arr.length
+
 	#See what type of data we're dealing with
 	dataType = getType arr[0]
 
 	smoothFunc = switch dataType
 			when 'Number' #scalar
+				properties.dimension = 'scalar'
 				#Validate all input if deep validation is on
 				validateNumber n for n in arr if Smooth.deepValidation
 				#Create the interpolator
@@ -259,7 +269,7 @@ Smooth = (arr, config = {}) ->
 				(t) -> interpolator.interpolate t
 
 			when 'Array' # vector
-				dimension = arr[0].length
+				properties.dimension = dimension = arr[0].length
 				throw 'Vectors must be non-empty' unless dimension
 				#Validate all input if deep validation is on
 				validateVector v, dimension for v in arr if Smooth.deepValidation
@@ -278,6 +288,16 @@ Smooth = (arr, config = {}) ->
 		else #for other clipping types, we scale the domain to extend exactly to the end of the input array
 			baseScale = arr.length - 1
 		smoothFunc = makeScaledFunction smoothFunc, baseScale, scaleRange
+		properties.domain = [scaleRange...].sort() #make sure domain interval is unflipped
+	else
+		#standard domain is from 0 to end of array
+		properties.domain = [0, arr.length-1] 
+		#extend domain by 1 for periodic functions
+		properties.domain[1]++ if config.clip is Smooth.CLIP_PERIODIC 
+	
+
+	###copy properties###
+	smoothFunc[k] = v for own k,v of properties
 
 	return smoothFunc
 

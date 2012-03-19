@@ -9,6 +9,7 @@
 [                        Scaling](#rm-scale)<br/>
 [                        Validation](#rm-valid)<br/>
 [                Interpolating Vectors](#rm-vec)<br/>
+[                Function Properties](#rm-prop)<br/>
 [        Future Plans](#rm-future)<br/>
 
 <a name = "rm-what" />
@@ -279,6 +280,24 @@ var path = Smooth(points, {
 
 could be used to create a path function along which to animate a sprite in a loop.
 
+<a name = "rm-prop" />
+## Function Properties
+
+The function returned by `Smooth()` has a few properties which provide information about it. **Changing these
+properties has no effect on the function.**
+
+`s.config` : a shallow copy of the config object you provided when creating the function. If you did not 
+provide a config object, `s.config` will be an empty object. Note that this is a *shallow* copy, so any 
+modifications you make to object properties of the config will be reflected by `s.config`, although the 
+behavior of `s` itself will not be affected.
+
+`s.domain` : The interval on which the function is defined. Outside of this interval, the function's behavior
+is determined by the clipping mode. This property is affected by the `scaleTo` parameter.
+
+`s.count` : The number of elements in the input array.
+
+`s.dimension` : If the input array contains scalar numbers, `s.dimension` will be `'scalar'`. If the input 
+array contains vectors, `s.dimension` will be the vector size.
 
 <a name = "rm-future" />
 # Future Plans

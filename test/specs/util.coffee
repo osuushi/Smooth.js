@@ -10,3 +10,9 @@ exports.distance = (a, b) ->
 	l = a.length
 	sqDist += Math.pow a[i]-b[i], 2 for i in [0...l]
 	return Math.sqrt sqDist
+
+
+exports.shallowCopy = (obj) ->
+	copy = {}
+	copy[k] = v for own k,v of obj
+	copy
