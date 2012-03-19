@@ -2,6 +2,10 @@
 
 This is a log of changes to the library itself. Other changes, like tests, are omitted.
 
+##0.1.6
+
+* Fixed bug where `Smooth()` would modify the config object passed to it, rather than working on a copy
+
 ##0.1.5
 
 * Lanczos interpolation. See [Lanczos resampling](http://en.wikipedia.org/wiki/Lanczos_resampling).
