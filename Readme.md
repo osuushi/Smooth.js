@@ -20,6 +20,9 @@ that array. Smooth.js supports several interpolation methods, and flexible optio
 Smooth.js is written in clean, easy-to-read CoffeeScript, and has no external dependencies. It is licensed 
 under the permissive MIT license, so you can use it in just about any project.
 
+This [demo](http://osuushi.github.com/plotdemo016.html) (requires a modern browser) gives a 
+visualization of the interpolation Smooth.js performs.
+
 <a name = "rm-how" />
 # How do I use it?
 
