@@ -69,18 +69,14 @@ class AbstractInterpolator
 		@array = array.slice 0 #copy the array
 		@length = @array.length #cache length
 
-
-		clipHelpers = 
+		#Set the clipping helper method
+		throw "Invalid clip: #{config.clip}" unless @clipHelper = {
 			clamp: @clipHelperClamp
 			zero: @clipHelperZero
 			periodic: @clipHelperPeriodic
 			mirror: @clipHelperMirror
+		}[config.clip]
 
-		#Set the clipping helper method
-		@clipHelper = clipHelpers[config.clip]
-
-		throw "Invalid clip: #{config.clip}" unless @clipHelper?
-				
 
     # Get input array value at i, applying the clipping method
 	getClippedInput: (i) ->
@@ -110,15 +106,14 @@ class NearestInterpolator extends AbstractInterpolator
 class LinearInterpolator extends AbstractInterpolator
 	interpolate: (t) ->
 		k = Math.floor t
-		a = @getClippedInput k
-		b = @getClippedInput k+1
 		#Translate t to interpolate between k and k+1
 		t -= k
-		return (1-t)*a + (t)*b
+		return (1-t)*@getClippedInput(k) + (t)*@getClippedInput(k+1)
 
 
 class CubicInterpolator extends AbstractInterpolator
 	constructor: (array, config)->
+		#clamp cubic tension to [0,1] range
 		@tangentFactor = 1 - Math.max 0, Math.min 1, config.cubicTension
 		super
 
@@ -137,15 +132,14 @@ class CubicInterpolator extends AbstractInterpolator
 		return (2*t3 - 3*t2 + 1)*p[0] + (t3 - 2*t2 + t)*m[0] + (-2*t3 + 3*t2)*p[1] + (t3 - t2)*m[1]
 
 {sin, PI} = Math
-sinc = (x) -> 
-	if x is 0 then 1
-	else sin(PI*x)/(PI*x)
+#Normalized sinc function
+sinc = (x) -> if x is 0 then 1 else sin(PI*x)/(PI*x)
 
-makeLanczosWindow = (a) ->
-	(x) -> sinc(x/a) #lanczos window
+#Make a lanczos window function for a given filter size 'a'
+makeLanczosWindow = (a) -> (x) -> sinc(x/a)
 
-makeSincKernel = (window) ->
-	(x) -> sinc(x)*window(x)
+#Make a sinc kernel function by multiplying the sinc function by a window function
+makeSincKernel = (window) -> (x) -> sinc(x)*window(x)
 
 class SincFilterInterpolator extends AbstractInterpolator
 	constructor: (array, config) ->
@@ -153,16 +147,16 @@ class SincFilterInterpolator extends AbstractInterpolator
 		#Create the lanczos kernel function
 		@a = config.sincFilterSize
 
-		window = config.sincWindow
-		throw 'No sincWindow provided' unless window?
-		@kernel = makeSincKernel window
+		#Cannot make sinc filter without a window function
+		throw 'No sincWindow provided' unless config.sincWindow
+		#Window the sinc function to make the kernel
+		@kernel = makeSincKernel config.sincWindow
 
 	interpolate: (t) ->
 		k = Math.floor t
 		#Convolve with Lanczos kernel
 		sum = 0
-		for n in [(k - @a + 1)..(k + @a)]
-			sum += @kernel(t - n)*@getClippedInput(n)
+		sum += @kernel(t - n)*@getClippedInput(n) for n in [(k - @a + 1)..(k + @a)]
 		sum
 
 
@@ -194,6 +188,7 @@ validateVector = (v, dimension) ->
 	throw 'Non-vector in Smooth() input' unless getType(v) is 'Array'
 	throw 'Inconsistent dimension in Smooth() input' unless v.length is dimension
 	validateNumber n for n in v
+	return
 
 isValidNumber = (n) -> (getType(n) is 'Number') and isFinite(n) and not isNaN(n)
 
@@ -280,21 +275,15 @@ Smooth = (arr, config = {}) ->
 
 			else throw "Invalid element type: #{dataType}"
 
-	if config.scaleTo
-		scaleRange = normalizeScaleTo config.scaleTo
-		#Because periodic functions repeat, we scale the domain to extend to the beginning of the next cycle.
-		if config.clip is Smooth.CLIP_PERIODIC
-			baseScale = arr.length
-		else #for other clipping types, we scale the domain to extend exactly to the end of the input array
-			baseScale = arr.length - 1
-		smoothFunc = makeScaledFunction smoothFunc, baseScale, scaleRange
-		properties.domain = [scaleRange...].sort() #make sure domain interval is unflipped
-	else
-		#standard domain is from 0 to end of array
-		properties.domain = [0, arr.length-1] 
-		#extend domain by 1 for periodic functions
-		properties.domain[1]++ if config.clip is Smooth.CLIP_PERIODIC 
+	# Determine the end of the original function's domain
+	if config.clip is 'periodic' then baseDomainEnd = arr.length #after last element for periodic
+	else baseDomainEnd = arr.length - 1 #at last element for non-periodic
+
+	config.scaleTo ||= baseDomainEnd #default scales to the end of the original domain for no effect
 	
+	properties.domain = normalizeScaleTo config.scaleTo
+	smoothFunc = makeScaledFunction smoothFunc, baseDomainEnd, properties.domain
+	properties.domain.sort()
 
 	###copy properties###
 	smoothFunc[k] = v for own k,v of properties
