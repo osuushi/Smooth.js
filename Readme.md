@@ -28,7 +28,7 @@ visualization of the interpolation Smooth.js performs.
 # How do I use it?
 
 You can compile to javascript from the Smooth.coffee source file, or 
-[download the latest compiled release](https://github.com/downloads/osuushi/Smooth.js/Smooth-0.1.6.js)
+[download the latest compiled release](https://github.com/downloads/osuushi/Smooth.js/Smooth-0.1.7.js)
 
 Smooth.js exposes one public function, `Smooth`. The simplest use case is like this:
 

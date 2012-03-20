@@ -2,6 +2,12 @@
 
 This is a log of changes to the library itself. Other changes, like tests, are omitted.
 
+##0.1.7
+
+* Added properties to smoothed functions: `config`, `domain`, `count`, and `dimension`.
+
+* Made code more concise.
+
 ##0.1.6
 
 * Fixed bug where `Smooth()` would modify the config object passed to it, rather than working on a copy
