@@ -227,17 +227,13 @@ Smooth = (arr, config = {}) ->
 	config[k] ?= v for own k,v of defaultConfig #fill in defaults
 
 	#Get the interpolator class according to the configuration
-	interpolatorClasses = 
-		nearest: NearestInterpolator
-		linear: LinearInterpolator
-		cubic: CubicInterpolator
-		lanczos: SincFilterInterpolator #lanczos is a specific case of sinc filter
-		sinc: SincFilterInterpolator
-
-
-	interpolatorClass = interpolatorClasses[config.method]
-	
-	throw "Invalid method: #{config.method}" unless interpolatorClass?
+	throw "Invalid method: #{config.method}" unless interpolatorClass = {
+			nearest: NearestInterpolator
+			linear: LinearInterpolator
+			cubic: CubicInterpolator
+			lanczos: SincFilterInterpolator #lanczos is a specific case of sinc filter
+			sinc: SincFilterInterpolator
+	}[config.method]
 
 	if config.method is 'lanczos'
 		#Setup lanczos window
@@ -293,7 +289,6 @@ Smooth = (arr, config = {}) ->
 
 #Copy enums to Smooth
 Smooth[k] = v for own k,v of Enum
-
 
 Smooth.deepValidation = true
 
