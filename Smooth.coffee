@@ -247,9 +247,8 @@ Smooth = (arr, config = {}) ->
 	properties.count = arr.length
 
 	#See what type of data we're dealing with
-	dataType = getType arr[0]
 
-	smoothFunc = switch dataType
+	smoothFunc = switch getType arr[0]
 			when 'Number' #scalar
 				properties.dimension = 'scalar'
 				#Validate all input if deep validation is on
@@ -269,7 +268,7 @@ Smooth = (arr, config = {}) ->
 				#make function that runs the interpolators and puts them into an array
 				(t) -> (interpolator.interpolate(t) for interpolator in interpolators)
 
-			else throw "Invalid element type: #{dataType}"
+			else throw "Invalid element type: #{getType arr[0]}"
 
 	# Determine the end of the original function's domain
 	if config.clip is 'periodic' then baseDomainEnd = arr.length #after last element for periodic
@@ -286,11 +285,9 @@ Smooth = (arr, config = {}) ->
 
 	return smoothFunc
 
-
 #Copy enums to Smooth
 Smooth[k] = v for own k,v of Enum
 
 Smooth.deepValidation = true
 
-root = exports ? window
-root.Smooth = Smooth
+(exports ? window).Smooth = Smooth
