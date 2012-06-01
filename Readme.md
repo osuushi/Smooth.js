@@ -161,7 +161,7 @@ Time complexity to interpolate a point: O(N), where N = `lanczosFilterSize`
 ### Clipping modes
 
 In addition to interpolating an array, Smooth.js allows you to specify the behavior of the output function 
-when the parameter is outside the array's bounds. This also has an effect on cubic interpolation when 
+when the parameter is outside the array's bounds. This also has an effect on cubic and sinc interpolation when 
 interpolating near the array's bounds.
 
 The `clip` config option specifies the clipping mode, and can take the following values:
