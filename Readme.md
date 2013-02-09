@@ -1,4 +1,4 @@
-![Smooth.js](/osuushi/Smooth.js/wiki/images/logo-white.png)
+![Smooth.js](images/logo-white.png)
 
 ####Table of Contents
 [        What is this for?](#rm-what)<br/>
@@ -33,7 +33,7 @@ You can compile to javascript from the Smooth.coffee source file, or
 Smooth.js exposes one public function, `Smooth`. The simplest use case is like this:
 
 ```js
-var s = Smooth([1,2,3,4]);
+var s = Smooth([1, 2, 3, 4]);
 console.log(s(1));			// => 2
 console.log(s(1.5));		// => 2.5
 ```
@@ -119,10 +119,10 @@ You must also provide a window function via the `sincWindow` configuration optio
 one numeric parameter and return a numeric value. For example:
 
 ```js
-var s = Smooth([1,2,3], {
+var s = Smooth([1, 2, 3], {
 	method: 'sinc',
 	sincFilterSize: 2
-	sincWindow: function(x) { return Math.exp( -x*x); }
+	sincWindow: function(x) { return Math.exp(-x * x); }
 });
 ```
 
@@ -199,7 +199,7 @@ Smooth.CLIP_MIRROR = 'mirror'
 ```
 
 Repeats the array infinitely in both directions, reflecting each time. For example, if you applied this to 
-`[1,2,3,4]` then the result would be `[1,2,3,4,3,2,1,2,3,4...]`. Useful for "loop back and forth" style 
+`[1, 2, 3, 4]` then the result would be `[1, 2, 3, 4, 3, 2, 1, 2, 3, 4...]`. Useful for "loop back and forth" style 
 animations, for example.
 
 <a name = "rm-scale" />
@@ -211,20 +211,20 @@ tells Smooth.js to leave the domain like the original array, so that for any int
 Setting the `scaleTo` option to non-zero will scale the domain to that value. For example:
 
 ```js
-var s = Smooth([1,2,3], { scaleTo: 1 });
-console.log( s(0) );		// => 1
-console.log( s(1/2) );		// => 2
-console.log( s(1) );		// => 3
+var s = Smooth([1, 2, 3], { scaleTo: 1 });
+console.log(s(0));		// => 1
+console.log(s(1 / 2));		// => 2
+console.log(s(1));		// => 3
 ```
 
 You can also provide a range for the `scaleTo` option, as an array of two numbers. This will scale the 
 function to fit in that range. For example
 
 ```js
-var s = Smooth([1,2,3], { scaleTo: [10,12] });
-console.log( s(10) );		// => 1
-console.log( s(12) );		// => 2
-console.log( s(14) );		// => 3
+var s = Smooth([1, 2, 3], { scaleTo: [10, 12] });
+console.log(s(10));		// => 1
+console.log(s(12));		// => 2
+console.log(s(14));		// => 3
 ```
 
 When using `Smooth.CLIP_PERIODIC`, the behavior of the `scaleTo` option is slightly different; instead of
@@ -234,11 +234,11 @@ function.
 For the sake of readability, the `period` config option is aliased to `scaleTo`. Thus:
 
 ```js
-var s = Smooth([1,2,3], { period: 1, clip:Smooth.CLIP_PERIODIC });
-console.log( s(0) );		// => 1
-console.log( s(1/3) );		// => 2
-console.log( s(2/3) );		// => 3
-console.log( s(1) );		// => 1
+var s = Smooth([1, 2, 3], { period: 1, clip:Smooth.CLIP_PERIODIC });
+console.log(s(0));		// => 1
+console.log(s(1 / 3));		// => 2
+console.log(s(2 / 3));		// => 3
+console.log(s(1));		// => 1
 ```
 
 <a name="rm-valid" />
