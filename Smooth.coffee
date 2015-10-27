@@ -66,7 +66,7 @@ Subclasses must override interpolate().
 class AbstractInterpolator
 
 	constructor: (array, config) ->
-		@array = Array.prototype.slice.call array, 0 # copy the array
+		@array = array.slice 0 #copy the array
 		@length = @array.length #cache length
 
 		#Set the clipping helper method
