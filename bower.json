@@ -1,0 +1,23 @@
+{
+  "name": "smooth.js",
+  "homepage": "https://github.com/osuushi/Smooth.js",
+  "authors": [
+    "yournamehere <someone@somewhere.com>"
+  ],
+  "description": "Smooth.js is an array interpolation library for Javascript",
+  "main": "",
+  "moduleType": [],
+  "keywords": [
+    "interpolation",
+    "javascript",
+    "smoothjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
