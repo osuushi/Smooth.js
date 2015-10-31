@@ -1,0 +1,35 @@
+{
+  "name": "smoothjs",
+  "version": "0.1.7",
+  "description": "array interpolation library",
+  "main": "lib/smooth.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "^1.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepublish": "./node_modules/.bin/coffee -o lib/ -c src/",
+    "postinstall": "./node_modules/.bin/coffee -o lib/ -c src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osuushi/Smooth.js.git"
+  },
+  "keywords": [
+    "interpolation",
+    "smoothjs",
+    "smooth.js",
+    "cubic",
+    "bicubic"
+  ],
+  "author": "yournamehere <your@email.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/osuushi/Smooth.js/issues"
+  },
+  "homepage": "https://github.com/osuushi/Smooth.js#readme"
+}
