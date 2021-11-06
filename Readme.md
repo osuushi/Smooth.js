@@ -1,6 +1,6 @@
 ![Smooth.js](images/logo-white.png)
 
-####Table of Contents
+#### Table of Contents
 [        What is this for?](#rm-what)<br/>
 [        How do I use it?](#rm-how)<br/>
 [                Configuration](#rm-config)<br/>
@@ -13,6 +13,7 @@
 [        Future Plans](#rm-future)<br/>
 
 <a name = "rm-what" />
+
 # What is this for?
 
 Smooth.js takes an array of numbers or vectors and returns a parametric function that continuously interpolates
@@ -25,6 +26,7 @@ This [demo](http://osuushi.github.com/plotdemo016.html) (requires a modern brows
 visualization of the interpolation Smooth.js performs.
 
 <a name = "rm-how" />
+
 # How do I use it?
 
 You can compile to javascript from the Smooth.coffee source file, or 
@@ -43,12 +45,14 @@ will print out index 1 of the array, which is 2. The third line *interpolates*
 halfway between indexes 1 and 2 of the array, yielding 2.5
 
 <a name = "rm-config" />
-##Configuration
+
+## Configuration
 
 The `Smooth` function can take an object as an optional second argument which specifies the configuration 
 options described below.
 
 <a name = "rm-method" />
+
 ### Interpolation Methods
 
         (For visual illustrations of these interpolation methods see 
@@ -158,6 +162,7 @@ this parameter.
 Time complexity to interpolate a point: O(N), where N = `lanczosFilterSize`
 
 <a name = "rm-clip" />
+
 ### Clipping modes
 
 In addition to interpolating an array, Smooth.js allows you to specify the behavior of the output function 
@@ -203,6 +208,7 @@ Repeats the array infinitely in both directions, reflecting each time. For examp
 animations, for example.
 
 <a name = "rm-scale" />
+
 ### Scaling
 
 The `scaleTo` config option allows you to scale the domain of the function. The default value is 0, which 
@@ -242,7 +248,8 @@ console.log(s(1));		// => 1
 ```
 
 <a name="rm-valid" />
-###Validation
+
+### Validation
 
 By default the input array you pass to `Smooth` will be examined thoroughly to make sure that the input is 
 valid, and exceptions will be thrown if any problems are found. This can be a performance consideration if you
@@ -258,7 +265,8 @@ This will cause the Smooth function to only validate the first element of each a
 
 
 <a name = "rm-vec" />
-##Interpolating Vectors
+
+## Interpolating Vectors
 
 So far all of the example code we've seen has used scalar arrays, but Smooth.js supports interpolation of 
 vectors of arbitrary dimension. Simply supply the vectors as arrays. For example, this code:
@@ -281,6 +289,7 @@ var path = Smooth(points, {
 could be used to create a path function along which to animate a sprite in a loop.
 
 <a name = "rm-prop" />
+
 ## Function Properties
 
 The function returned by `Smooth()` has a few properties which provide information about it. **Changing these
@@ -300,6 +309,7 @@ is determined by the clipping mode. This property is affected by the `scaleTo` p
 array contains vectors, `s.dimension` will be the vector size.
 
 <a name = "rm-future" />
+
 # Future Plans
 
 * Interpolation of non-uniform arrays (objects with arbitrary numeric indexes)
